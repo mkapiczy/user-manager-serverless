@@ -1,8 +1,7 @@
 import * as cdk from '@aws-cdk/core';
-import {CfnOutput} from '@aws-cdk/core';
 import {AuthorizationType, CfnAuthorizer, LambdaIntegration, RestApi} from "@aws-cdk/aws-apigateway";
-import {OAuthScope, UserPool, UserPoolClient, UserPoolDomain} from "@aws-cdk/aws-cognito";
 import {CreateUserLambda} from "./lambdas/CreateUserLambda";
+import {CognitoConstruct} from "./Cognito/CognitoConstruct";
 
 export class UserManagerServerlessStack extends cdk.Stack {
     private static readonly API_ID = 'UserManagerApi';
@@ -14,38 +13,14 @@ export class UserManagerServerlessStack extends cdk.Stack {
             restApiName: 'User Manager API'
         })
 
-        // const iamRole = this.createApiGatewayInvokeLambdasIamRole()
-
-
-        const cognitoUserPool = new UserPool(this, 'userPool', {})
-        new UserPoolClient(this, 'client', {
-            userPool: cognitoUserPool,
-            generateSecret: true,
-            oAuth: {
-                flows: {
-                    clientCredentials: true
-                },
-                scopes: [OAuthScope.custom('https://my-secure-api.example.com/admin')]
-            },
-        })
-        const userPoolDomain = new UserPoolDomain(this, 'id', {
-            userPool: cognitoUserPool,
-            cognitoDomain: {
-                domainPrefix: 'user-manager-serverless'
-            }
-        })
-
-        new CfnOutput(this, 'UserPoolUrl', {
-            exportName: `UserPoolUrl`,
-            value: `https://${userPoolDomain.domainName}.auth.us-east-1.amazoncognito.com`
-        });
+        const cognitoConstruct = new CognitoConstruct(this)
 
         const authorizer = new CfnAuthorizer(this, 'cfnAuth', {
             restApiId: api.restApiId,
             name: 'UserManagerApiAuthorizer',
             type: 'COGNITO_USER_POOLS',
             identitySource: 'method.request.header.Authorization',
-            providerArns: [cognitoUserPool.userPoolArn],
+            providerArns: [cognitoConstruct.userPoolArn],
         })
 
         const createUserLambda = new CreateUserLambda(this, 'CreateUserLambda');
