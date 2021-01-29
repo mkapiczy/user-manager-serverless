@@ -18,6 +18,7 @@
     "@aws-cdk/assert": "1.74.0",
     "@aws-cdk/aws-apigateway": "1.74.0",
     "@aws-cdk/aws-cognito": "1.74.0",
+    "@aws-cdk/aws-dynamodb": "^1.87.1",
     "@aws-cdk/aws-iam": "1.74.0",
     "@types/aws-lambda": "^8.10.71",
     "@types/jest": "^26.0.10",
