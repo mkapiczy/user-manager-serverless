@@ -2,6 +2,8 @@ import * as cdk from '@aws-cdk/core';
 import {AuthorizationType, CfnAuthorizer, LambdaIntegration, RestApi} from "@aws-cdk/aws-apigateway";
 import {CreateUserLambda} from "./lambdas/CreateUserLambda";
 import {CognitoConstruct} from "./Cognito/CognitoConstruct";
+import UsersDynamoDbTable from "./dynamodb/UsersDynamoDbTable";
+import {IFunction} from '@aws-cdk/aws-lambda';
 
 export class UserManagerServerlessStack extends cdk.Stack {
     private static readonly API_ID = 'UserManagerApi';
@@ -23,7 +25,9 @@ export class UserManagerServerlessStack extends cdk.Stack {
             providerArns: [cognitoConstruct.userPoolArn],
         })
 
-        const createUserLambda = new CreateUserLambda(this, 'CreateUserLambda');
+        let usersDynamoDbTable = new UsersDynamoDbTable(this);
+        const createUserLambda = new CreateUserLambda(this, 'CreateUserLambda', usersDynamoDbTable.tableName);
+        usersDynamoDbTable.grantWriteData(createUserLambda);
 
         const usersResource = api.root.addResource('users');
         usersResource.addMethod('GET',
