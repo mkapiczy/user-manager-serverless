@@ -5,14 +5,15 @@
     "user-manager-serverless": "bin/user-manager-serverless.js"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && npm run copyDependencies",
     "watch": "tsc -w",
     "test": "jest",
     "cdk": "cdk",
     "clean": "rm -rf ./cdk.out",
     "synth": "cdk synth --app \"npx ts-node ./bin/user-manager-serverless.ts\"",
     "deploy": "npm run synth && cdk deploy --app ./cdk.out/ --require-approval=never",
-    "buildAndDeploy": "npm run build && npm run synth && cdk deploy --app ./cdk.out/ --require-approval=never"
+    "buildAndDeploy": "npm run build && npm run synth && cdk deploy --app ./cdk.out/ --require-approval=never",
+    "copyDependencies": "copy-node-modules . node_modules_layer/nodejs/"
   },
   "devDependencies": {
     "@aws-cdk/assert": "1.74.0",
@@ -26,13 +27,14 @@
     "@types/uuid": "^8.3.0",
     "aws-cdk": "1.74.0",
     "aws-lambda": "^1.0.6",
-    "aws-xray-sdk-core": "^3.2.0",
     "jest": "^26.4.2",
     "ts-jest": "^26.5.0",
     "ts-node": "^8.1.0",
-    "typescript": "~3.9.7"
+    "typescript": "~3.9.7",
+    "copy-node-modules": "^1.1.1"
   },
   "dependencies": {
+    "aws-xray-sdk-core": "^3.2.0",
     "@aws-cdk/core": "1.74.0",
     "source-map-support": "^0.5.16",
     "uuid": "^8.3.2"
