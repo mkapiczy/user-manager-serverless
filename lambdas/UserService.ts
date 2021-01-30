@@ -3,6 +3,7 @@ import {UserInputDto} from "./model/UserInputDto";
 import {v4} from 'uuid';
 import * as AWSXRay from 'aws-xray-sdk-core';
 import {UserDto} from "./model/UserDto";
+import NotFoundError from "./error/NotFoundError";
 
 const documentClient = new DocumentClient();
 AWSXRay.captureAWSClient((documentClient as any).service);
@@ -33,7 +34,7 @@ export  class UserService {
         if (result && result.Item) {
             return result.Item as UserDto;
         }
-        throw new Error('User not found');
+        throw new NotFoundError();
     }
 
     public async updateUser(id: string, userToUpdate: UserInputDto): Promise<UserDto> {
