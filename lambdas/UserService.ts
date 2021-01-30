@@ -7,7 +7,7 @@ import {UserDto} from "./model/UserDto";
 const documentClient = new DocumentClient();
 AWSXRay.captureAWSClient((documentClient as any).service);
 
-export default class UserService {
+export  class UserService {
     public async createUser(user: UserInputDto): Promise<UserDto> {
         const newUser = {
             id: v4(),
@@ -77,7 +77,7 @@ export default class UserService {
                 throw new Error('Delete user error');
             });
     }
-
-
 }
+
+export default new UserService();
 
