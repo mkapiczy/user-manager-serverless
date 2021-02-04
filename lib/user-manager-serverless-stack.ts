@@ -1,5 +1,5 @@
 import * as cdk from '@aws-cdk/core';
-import {CognitoConstruct} from "./Cognito/CognitoConstruct";
+import {CognitoConstruct} from "./cognito/CognitoConstruct";
 import UsersDynamoDbTable from "./dynamodb/UsersDynamoDbTable";
 import {LambdaConstruct} from "./lambdas/LambdaConstruct";
 import {ApiGatewayConstruct} from "./apiGateway/ApiGatewayConstruct";

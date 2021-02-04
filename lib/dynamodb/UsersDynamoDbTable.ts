@@ -16,7 +16,6 @@ export class UsersDynamoDbTable extends Table {
             removalPolicy: RemovalPolicy.DESTROY,
         });
     }
-
 }
 
 export default UsersDynamoDbTable;

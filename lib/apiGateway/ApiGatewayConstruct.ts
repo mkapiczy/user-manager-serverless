@@ -1,18 +1,12 @@
 import {Construct} from '@aws-cdk/core';
 import {AuthorizationType, CfnAuthorizer, LambdaIntegration, RestApi} from "@aws-cdk/aws-apigateway";
 import {LambdaConstruct} from "../lambdas/LambdaConstruct";
-import {CognitoConstruct} from "../Cognito/CognitoConstruct";
+import {CognitoConstruct} from "../cognito/CognitoConstruct";
 
 export class ApiGatewayConstruct extends Construct {
     public static readonly ID = 'UserManagerApiGateway';
 
-    constructor(scope: Construct, cognitoUserPoolArn: string, {
-        createUserLambda,
-        deleteUserLambda,
-        updateUserLambda,
-        getUsersLambda,
-        getUserByIdLambda
-    }: LambdaConstruct) {
+    constructor(scope: Construct, cognitoUserPoolArn: string, lambdas: LambdaConstruct) {
         super(scope, ApiGatewayConstruct.ID);
         const api = new RestApi(this, ApiGatewayConstruct.ID, {
             restApiName: 'User Manager API'
@@ -36,11 +30,11 @@ export class ApiGatewayConstruct extends Construct {
 
 
         const usersResource = api.root.addResource('users');
-        usersResource.addMethod('POST', new LambdaIntegration(createUserLambda), authorizationParams);
-        usersResource.addMethod('GET', new LambdaIntegration(getUsersLambda), authorizationParams);
+        usersResource.addMethod('POST', new LambdaIntegration(lambdas.createUserLambda), authorizationParams);
+        usersResource.addMethod('GET', new LambdaIntegration(lambdas.getUsersLambda), authorizationParams);
         const userResource = usersResource.addResource('{userId}');
-        userResource.addMethod('GET', new LambdaIntegration(getUserByIdLambda), authorizationParams);
-        userResource.addMethod('POST', new LambdaIntegration(updateUserLambda), authorizationParams);
-        userResource.addMethod('DELETE', new LambdaIntegration(deleteUserLambda), authorizationParams);
+        userResource.addMethod('GET', new LambdaIntegration(lambdas.getUserByIdLambda), authorizationParams);
+        userResource.addMethod('POST', new LambdaIntegration(lambdas.updateUserLambda), authorizationParams);
+        userResource.addMethod('DELETE', new LambdaIntegration(lambdas.deleteUserLambda), authorizationParams);
     }
 }
